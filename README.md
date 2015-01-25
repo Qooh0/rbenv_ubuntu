@@ -10,7 +10,7 @@ Ubuntu
   ---
   - hosts: all
     roles:
-    - role: Qooh0.rbenv
+    - role: Qooh0.rbenv_ubuntu
 
 ## Role Variables
 
