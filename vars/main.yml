@@ -1,7 +1,7 @@
 ---
 rbenv_ruby_version: 2.2.0
-user_home_dir: /home/vagrant
-system_packages:
+rbenv_install_dir: /home/vagrant
+rbenv_system_packages:
   - zlib1g-dev
   - build-essential
   - git
