@@ -1,0 +1,12 @@
+---
+rbenv_ruby_version: 2.2.0
+user_home_dir: /home/vagrant
+system_packages:
+  - zlib1g-dev
+  - build-essential
+  - git
+  - libffi-dev
+  - libreadline6
+  - libreadline6-dev
+  - libssl-dev
+  - libssl1.0.0

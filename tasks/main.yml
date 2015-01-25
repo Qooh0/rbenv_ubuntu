@@ -1,0 +1,27 @@
+---
+- name: install git
+  sudo: yes
+  apt: name={{ item }} state=installed update-cache=yes
+  with_items: rbenv_system_packages
+
+- name: install rbenv
+  git:  repo=https://github.com/sstephenson/rbenv.git dest=/home/vagrant/.rbenv
+
+- name: install ruby-build
+  git:  repo=https://github.com/sstephenson/ruby-build.git dest=/home/vagrant/.rbenv/plugins/ruby-build
+
+- name: touch .bash_profile
+  file: path={{ rbenv_install_dir }}/.bash_profile state=touch
+
+# Add a line to a file if it does not exist, without passing regexp
+- name: add rbenv path
+  lineinfile: dest={{ rbenv_install_dir }}/.bash_profile line='export PATH="$HOME/.rbenv/bin:$PATH"'
+
+- name: rbenv init
+  lineinfile: dest={{ rbenv_install_dir }}/.bash_profile line='eval "$(rbenv init -)"'
+
+- name: download ruby
+  shell: bash -lc "rbenv install {{ rbenv_ruby_version }}"
+
+- name: global ruby settings
+  shell: bash -lc "rbenv global {{ rbenv_ruby_version }} && rbenv rehash"
