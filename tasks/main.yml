@@ -13,15 +13,38 @@
 - name: touch .bash_profile
   file: path={{ rbenv_install_dir }}/.bash_profile state=touch
 
+- name: bash_profile check
+  ignore_errors: yes
+  changed_when: false
+  always_run: yes
+  shell: bash -lc "grep 'rbenv init -' ~/.bash_profile"
+  register: bash_profile_rbenv_exist
+
 # Add a line to a file if it does not exist, without passing regexp
 - name: add rbenv path
   lineinfile: dest={{ rbenv_install_dir }}/.bash_profile line='export PATH="$HOME/.rbenv/bin:$PATH"'
+  when:
+    - bash_profile_rbenv_exist.rc == 1
 
 - name: rbenv init
   lineinfile: dest={{ rbenv_install_dir }}/.bash_profile line='eval "$(rbenv init -)"'
+  when:
+    - bash_profile_rbenv_exist.rc == 1
+
+- name: installed ruby version check
+  tags: ruby
+  ignore_errors: yes
+  changed_when: false
+  always_run: yes
+  shell: bash -lc "ruby -v | grep {{ rbenv_ruby_version }}"
+  register: ruby_installed
 
 - name: download ruby
   shell: bash -lc "rbenv install {{ rbenv_ruby_version }}"
+  when:
+    - ruby_installed.rc == 1    # if rbenv_ruby_version's ruby is not installed
 
 - name: global ruby settings
   shell: bash -lc "rbenv global {{ rbenv_ruby_version }} && rbenv rehash"
+  when:
+    - ruby_installed.rc == 1    # if rbenv_ruby_version's ruby is not installed
